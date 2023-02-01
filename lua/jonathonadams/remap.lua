@@ -15,14 +15,14 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
--- When pasting over something, won't loose original yank 
-vim.keymap.set("x", "<leader>p", [["_dP]])
-
 -- leader y/p will copy/delete to system clipboard
 vim.keymap.set({"n", "x"}, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
-vim.keymap.set({"n", "x"}, "<leader>d", [["_d]])
+vim.keymap.set({"n", "x"}, "<leader>p", [["+p]])
+vim.keymap.set("n", "<leader>P", [["+P]])
 
+-- When pasting over something, won't loose original yank 
+vim.keymap.set({"n", "x"}, "<leader>d", [["_d]])
 
 -- vim.keymap.set("n", "Q", "<nop>")
 --
