@@ -1,14 +1,28 @@
 local lsp = require("lsp-zero")
+local util = require('lspconfig/util')
+
+local path = util.path
 
 lsp.preset("recommended")
 
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+
 lsp.ensure_installed({
-    'tsserver',
-    'eslint',
     'sumneko_lua',
-    'rust_analyzer',
+    'eslint',
+    'tsserver',
+    'svelte',
+    'pyright',
+    'rust_analyzer'
 })
 
+
+-- 'pylint',
+-- 'black',
+--
+
+-- https://github.com/VonHeikemen/lsp-zero.nvim#configurename-opts
+-- :help lspconfig-setup
 
 -- Fix Undefined global 'vim'
 lsp.configure('sumneko_lua', {
@@ -22,6 +36,16 @@ lsp.configure('sumneko_lua', {
 })
 
 
+lsp.configure('tsserver', {
+    filetypes = { "typescript" },
+})
+
+lsp.configure('pyright', {
+    exclude = { "./.venv"},
+    venvPath = ".",
+    venv = ".venv",
+})
+
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
 local cmp_mappings = lsp.defaults.cmp_mappings({
@@ -33,8 +57,8 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 
 -- disable completion with tab
 -- this helps with copilot setup
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
+-- cmp_mappings['<Tab>'] = nil
+-- cmp_mappings['<S-Tab>'] = nil
 
 
 lsp.setup_nvim_cmp({
@@ -56,11 +80,6 @@ lsp.set_preferences({
 lsp.on_attach(function(client, bufnr)
     local opts = {buffer = bufnr, remap = false}
 
-    if client.name == "eslint" then
-        vim.cmd.LspStop('eslint')
-        return
-    end
-
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
     vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
@@ -72,6 +91,9 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
     vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
 end)
+
+-- Configure lua language server for Neovim specify
+lsp.nvim_workspace()
 
 lsp.setup()
 
