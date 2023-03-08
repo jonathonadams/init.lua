@@ -1,2 +1,3 @@
-require("jonathonadams")
+require("core")
+require("keymaps")
 
