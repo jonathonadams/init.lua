@@ -32,7 +32,12 @@ return {
         config = function()
             local lsp = require('lsp-zero').preset({
                 name = 'recommended',
+                manage_nvim_cmp = {
+                    set_sources = false
+                }
             })
+
+            local lspconfig = require('lspconfig')
 
             lsp.ensure_installed({
                 'lua_ls',
@@ -48,6 +53,13 @@ return {
                 lsp.default_keymaps({ buffer = bufnr })
             end)
 
+            lsp.set_sign_icons({
+                error = '✘',
+                warn = '▲',
+                hint = '⚑',
+                info = '»'
+            })
+
             lsp.format_mapping('<leader>f', {
                 format_opts = {
                     async = false,
@@ -56,16 +68,37 @@ return {
                 servers = {
                     ['lua_ls'] = { 'lua' },
                     ['rust_analyzer'] = { 'rust' },
+                    -- prettier
                     ['null-ls'] = { 'javascript', 'typescript', 'svelte', 'html', 'css', 'json', 'yaml', 'scss' },
                     ['pyright'] = { 'python' },
                 }
             })
 
             -- (Optional) Configure lua language server for neovim
-            require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
+            lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
 
             lsp.setup()
 
+            local cmp = require('cmp')
+
+            cmp.setup({
+                window = {
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
+                },
+                sources = {
+                    { name = 'path' },
+                    { name = 'nvim_lsp' },
+                    { name = 'buffer',  keyword_length = 3 },
+                    -- { name = 'luasnip', keyword_length = 2 },
+                },
+                mapping = {
+                    -- `Enter` key to confirm completion
+                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    -- Ctrl+Space to trigger completion menu
+                    ['<C-Space>'] = cmp.mapping.complete(),
+                }
+            })
 
             local null_ls = require('null-ls')
 
