@@ -1,3 +1,4 @@
+-- project view
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
 -- move highlighted line up/down
@@ -10,24 +11,27 @@ vim.keymap.set("n", "J", "mzJ`z")
 -- keep screen centered when half screen scrolling
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
+
 -- when searching, keeps highlighted term term in centre of screen
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 -- leader y/p will copy/delete to system clipboard
-vim.keymap.set({"n", "x"}, "<leader>y", [["+y]])
+vim.keymap.set({ "n", "x" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
-vim.keymap.set({"n", "x"}, "<leader>p", [["+p]])
+vim.keymap.set({ "n", "x" }, "<leader>p", [["+p]])
 vim.keymap.set("n", "<leader>P", [["+P]])
 
--- When pasting over something, won't loose original yank 
-vim.keymap.set({"n", "x"}, "<leader>d", [["_d]])
+-- When pasting over something, won't loose original yank
+vim.keymap.set({ "n", "x" }, "<leader>d", [["_d]])
 
 -- vim.keymap.set("n", "Q", "<nop>")
 --
 -- Quick navigation to new project (via tmux)
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+
 --vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+-- format is now setup in lsp.lua
 
 -- Quick Fix list navigation
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")

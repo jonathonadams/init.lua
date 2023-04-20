@@ -8,10 +8,17 @@ return {
                     enabled = false
                 },
                 suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
+                    enabled = false,
+                  --  auto_trigger = false,
                 },
             })
         end,
+    },
+    {
+      "zbirenbaum/copilot-cmp",
+      dependencies = { "copilot.lua" },
+      config = function ()
+      require("copilot_cmp").setup()
+      end
     }
 }

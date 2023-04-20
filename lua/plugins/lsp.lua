@@ -25,8 +25,11 @@ return {
             { 'hrsh7th/cmp-nvim-lsp' }, -- Required
             { 'L3MON4D3/LuaSnip' },     -- Required
 
-            -- VS Code Icons
-            -- {'onsails/lspkind-nvim'},              -- Optional
+            -- Copilot
+            { 'zbirenbaum/copilot-cmp' }, -- Optional
+
+            -- Codicons
+            { 'onsails/lspkind-nvim' }, -- Optional
 
         },
         config = function()
@@ -37,7 +40,6 @@ return {
                 }
             })
 
-            local lspconfig = require('lspconfig')
 
             lsp.ensure_installed({
                 'lua_ls',
@@ -74,12 +76,15 @@ return {
                 }
             })
 
+            local lspconfig = require('lspconfig')
+
             -- (Optional) Configure lua language server for neovim
             lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
 
             lsp.setup()
 
             local cmp = require('cmp')
+            local lspkind = require('lspkind')
 
             cmp.setup({
                 window = {
@@ -87,6 +92,7 @@ return {
                     documentation = cmp.config.window.bordered(),
                 },
                 sources = {
+                    { name = "copilot" },
                     { name = 'path' },
                     { name = 'nvim_lsp' },
                     { name = 'buffer',  keyword_length = 3 },
@@ -97,6 +103,21 @@ return {
                     ['<CR>'] = cmp.mapping.confirm({ select = true }),
                     -- Ctrl+Space to trigger completion menu
                     ['<C-Space>'] = cmp.mapping.complete(),
+                },
+                formatting = {
+                    format = lspkind.cmp_format({
+                        mode = "symbol_text",
+                        menu = ({
+                            buffer = "[Buffer]",
+                            nvim_lsp = "[LSP]",
+                            luasnip = "[LuaSnip]",
+                            path  = "[Path]",
+                            copilot = "[Copilot]",
+                        }),
+                        maxwidth = 80,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+                        ellipsis_char = '...', --
+                        symbol_map = { Copilot = "" }
+                    })
                 }
             })
 
