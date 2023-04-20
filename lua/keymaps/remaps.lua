@@ -27,7 +27,7 @@ vim.keymap.set({"n", "x"}, "<leader>d", [["_d]])
 --
 -- Quick navigation to new project (via tmux)
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+--vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
 -- Quick Fix list navigation
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")

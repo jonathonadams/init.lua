@@ -4,6 +4,9 @@ return {
     keys = {
       { '<leader>zz'},
     },
+    dependencies = {
+      {'folke/twilight.nvim'},
+    },
     config = function()  
       local zen = require("zen-mode")
       zen.setup {
@@ -18,7 +21,7 @@ return {
         plugins = {
           tmux = { enabled = true },
           kitty = {
-            enabled = true,
+            enabled = false,
             font = "+0",  
           },
         },
@@ -47,9 +50,6 @@ return {
   },
   { 
     "folke/twilight.nvim",
-    keys = {
-      { '<leader>zz'},
-    },
     config = function()
       require("twilight").setup {
         -- amount of lines we will try to show around the current line
