@@ -27,10 +27,6 @@ return {
 
             -- Copilot
             { 'zbirenbaum/copilot-cmp' }, -- Optional
-
-            -- Codicons
-            { 'onsails/lspkind-nvim' }, -- Optional
-
         },
         config = function()
             local lsp = require('lsp-zero').preset({
@@ -51,7 +47,7 @@ return {
             })
 
 
-            lsp.on_attach(function(client, bufnr)
+            lsp.on_attach(function(_, bufnr)
                 lsp.default_keymaps({ buffer = bufnr })
             end)
 
@@ -84,7 +80,45 @@ return {
             lsp.setup()
 
             local cmp = require('cmp')
-            local lspkind = require('lspkind')
+
+            -- These require the vs code codicons `https://microsoft.github.io/vscode-codicons`
+            -- The trailisng space is required for formatting
+
+            local cmp_kinds = {
+                Text = ' ',
+                Method = ' ',
+                Function = ' ',
+                Constructor = ' ',
+                Field = ' ',
+                Variable = ' ',
+                Class = ' ',
+                Interface = ' ',
+                Module = ' ',
+                Property = ' ',
+                Unit = ' ',
+                Value = ' ',
+                Enum = ' ',
+                Keyword = ' ',
+                Snippet = ' ',
+                Color = ' ',
+                File = ' ',
+                Reference = ' ',
+                Folder = ' ',
+                EnumMember = ' ',
+                Constant = ' ',
+                Struct = ' ',
+                Event = ' ',
+                Operator = ' ',
+                TypeParameter = ' ',
+                Copilot = ' ',
+            }
+
+
+            local has_words_before = function()
+                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+            end
 
             cmp.setup({
                 window = {
@@ -100,25 +134,59 @@ return {
                 },
                 mapping = {
                     -- `Enter` key to confirm completion
-                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
                     -- Ctrl+Space to trigger completion menu
                     ['<C-Space>'] = cmp.mapping.complete(),
+                    ["<Tab>"] = vim.schedule_wrap(function(fallback)
+                        if cmp.visible() and has_words_before() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end),
                 },
                 formatting = {
-                    format = lspkind.cmp_format({
-                        mode = "symbol_text",
-                        menu = ({
-                            buffer = "[Buffer]",
-                            nvim_lsp = "[LSP]",
-                            luasnip = "[LuaSnip]",
-                            path  = "[Path]",
-                            copilot = "[Copilot]",
-                        }),
-                        maxwidth = 80,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-                        ellipsis_char = '...', --
-                        symbol_map = { Copilot = "" }
-                    })
-                }
+                    fields = { "kind", "abbr", "menu" },
+                    -- vim_item : see `h complete-items'
+                    format = function(entry, vim_item)
+                        vim_item.kind = cmp_kinds[vim_item.kind] or ''
+                        -- vim_item.kind = (cmp_kinds[vim_item.kind] or '') .. vim_item.kind
+
+                        -- Import Path
+                        if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= "" then
+                            vim_item.menu = entry.completion_item.detail
+                        else
+                            -- Source
+                            vim_item.menu = ({
+                                buffer   = "[Buffer]",
+                                nvim_lsp = "[LSP]",
+                                luasnip  = "[LuaSnip]",
+                                path     = "[Path]",
+                                copilot  = "[Copilot]",
+                            })[entry.source.name]
+                        end
+
+                        return vim_item
+                    end,
+                },
+                sorting = {
+                    priority_weight = 2,
+                    comparators = {
+                        require("copilot_cmp.comparators").prioritize,
+
+                        -- Below is the default comparitor list and order for nvim-cmp
+                        cmp.config.compare.offset,
+                        -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+                        cmp.config.compare.exact,
+                        cmp.config.compare.score,
+                        cmp.config.compare.recently_used,
+                        cmp.config.compare.locality,
+                        cmp.config.compare.kind,
+                        cmp.config.compare.sort_text,
+                        cmp.config.compare.length,
+                        cmp.config.compare.order,
+                    },
+                },
             })
 
             local null_ls = require('null-ls')
