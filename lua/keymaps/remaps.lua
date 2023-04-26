@@ -28,7 +28,7 @@ vim.keymap.set({ "n", "x" }, "<leader>d", [["_d]])
 -- vim.keymap.set("n", "Q", "<nop>")
 --
 -- Quick navigation to new project (via tmux)
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessions<CR>")
 
 --vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 -- format is now setup in lsp.lua
