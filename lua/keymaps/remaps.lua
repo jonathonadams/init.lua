@@ -1,5 +1,7 @@
 -- project view
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+-- project tree
+vim.keymap.set("n", "<leader>pt", vim.cmd.Neotree)
 
 -- move highlighted line up/down
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -30,9 +32,6 @@ vim.keymap.set({ "n", "x" }, "<leader>d", [["_d]])
 -- Quick navigation to new project (via tmux)
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessions<CR>")
 
---vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
--- format is now setup in lsp.lua
-
 -- Quick Fix list navigation
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
@@ -44,3 +43,5 @@ vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 
 -- leaders x -> set executable file permissions on a file (i.e. bash script)
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+
+vim.keymap.set("n", "<leader>gs", ":Neotree float git_status<CR>")

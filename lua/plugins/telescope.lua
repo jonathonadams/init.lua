@@ -26,7 +26,7 @@ return {
                         horizontal = {
                             -- height = vim.o.lines,      -- Maximally available lines
                             -- width = vim.o.columns,     -- Maximally available columns
-                            prompt_position = "top",
+                            -- prompt_position = "top",
                             preview_width = 0.6
                         },
                         -- other layout configuration here

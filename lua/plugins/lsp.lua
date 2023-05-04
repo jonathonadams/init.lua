@@ -1,205 +1,219 @@
 return {
-    {
-        "jose-elias-alvarez/null-ls.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
+  {
+    "jose-elias-alvarez/null-ls.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
+  {
+    'VonHeikemen/lsp-zero.nvim',
+    branch = 'v2.x',
+    event = "BufRead",
+    cmd = { "Mason" },
+    dependencies = {
+      -- LSP Support
+      { 'neovim/nvim-lspconfig' }, -- Required
+      {
+        -- Optional
+        'williamboman/mason.nvim',
+        build = function()
+          pcall(vim.cmd, 'MasonUpdate')
+        end,
+      },
+      { 'williamboman/mason-lspconfig.nvim' }, -- Optional
+
+      -- Autocompletion
+      { 'hrsh7th/nvim-cmp' },     -- Required
+      { 'hrsh7th/cmp-nvim-lsp' }, -- Required
+      { 'L3MON4D3/LuaSnip' },     -- Required
+
+      -- Copilot
+      { 'zbirenbaum/copilot-cmp' }, -- Optional
     },
-    {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v2.x',
-        event = "BufRead",
-        cmd = { "Mason" },
-        dependencies = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' }, -- Required
-            {
-                -- Optional
-                'williamboman/mason.nvim',
-                build = function()
-                    pcall(vim.cmd, 'MasonUpdate')
-                end,
-            },
-            { 'williamboman/mason-lspconfig.nvim' }, -- Optional
-
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },     -- Required
-            { 'hrsh7th/cmp-nvim-lsp' }, -- Required
-            { 'L3MON4D3/LuaSnip' },     -- Required
-
-            -- Copilot
-            { 'zbirenbaum/copilot-cmp' }, -- Optional
+    config = function()
+      vim.diagnostic.config({
+        virtual_text = {
+          spacing = 0,
+          source = "always",
+          prefix = "",
+          -- severity = { min = vim.diagnostic.severity.WARN },
         },
-        config = function()
-            local lsp = require('lsp-zero').preset({
-                name = 'recommended',
-                manage_nvim_cmp = {
-                    set_sources = false
-                }
-            })
+
+      })
+
+      local lsp = require('lsp-zero').preset({
+        name = 'recommended',
+        configure_diagnostics = false,
+        manage_nvim_cmp = {
+          set_sources = false
+        }
+      })
 
 
-            lsp.ensure_installed({
-                'lua_ls',
-                'eslint',
-                'tsserver',
-                'rust_analyzer',
-                'pyright',
-                'svelte'
-            })
+      lsp.ensure_installed({
+        'lua_ls',
+        'eslint',
+        'tsserver',
+        'rust_analyzer',
+        'pyright',
+        'svelte'
+      })
 
 
-            lsp.on_attach(function(_, bufnr)
-                lsp.default_keymaps({ buffer = bufnr })
-            end)
+      lsp.on_attach(function(_, bufnr)
+        lsp.default_keymaps({ buffer = bufnr })
+      end)
 
-            lsp.set_sign_icons({
-                error = '✘',
-                warn = '▲',
-                hint = '⚑',
-                info = '»'
-            })
+      lsp.configure('tsserver', {
+        single_file_support = false,
+      })
 
-            lsp.format_mapping('<leader>f', {
-                format_opts = {
-                    async = false,
-                    timeout_ms = 10000,
-                },
-                servers = {
-                    ['lua_ls'] = { 'lua' },
-                    ['rust_analyzer'] = { 'rust' },
-                    -- prettier
-                    ['null-ls'] = { 'javascript', 'typescript', 'svelte', 'html', 'css', 'json', 'yaml', 'scss' },
-                    ['pyright'] = { 'python' },
-                }
-            })
+      lsp.set_sign_icons({
+        error = '✘',
+        warn = '▲',
+        hint = '⚑',
+        info = '»'
+      })
 
-            local lspconfig = require('lspconfig')
+      lsp.format_mapping('<leader>f', {
+        format_opts = {
+          async = false,
+          timeout_ms = 10000,
+        },
+        servers = {
+          ['lua_ls'] = { 'lua' },
+          ['rust_analyzer'] = { 'rust' },
+          -- prettier
+          ['null-ls'] = { 'javascript', 'typescript', 'svelte', 'html', 'css', 'json', 'yaml', 'scss' },
+          ['pyright'] = { 'python' },
+        }
+      })
 
-            -- (Optional) Configure lua language server for neovim
-            lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
+      local lspconfig = require('lspconfig')
 
-            lsp.setup()
+      -- (Optional) Configure lua language server for neovim
+      lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
 
-            local cmp = require('cmp')
+      lsp.setup()
 
-            -- These require the vs code codicons `https://microsoft.github.io/vscode-codicons`
-            -- The trailisng space is required for formatting
+      local cmp = require('cmp')
 
-            local cmp_kinds = {
-                Text = ' ',
-                Method = ' ',
-                Function = ' ',
-                Constructor = ' ',
-                Field = ' ',
-                Variable = ' ',
-                Class = ' ',
-                Interface = ' ',
-                Module = ' ',
-                Property = ' ',
-                Unit = ' ',
-                Value = ' ',
-                Enum = ' ',
-                Keyword = ' ',
-                Snippet = ' ',
-                Color = ' ',
-                File = ' ',
-                Reference = ' ',
-                Folder = ' ',
-                EnumMember = ' ',
-                Constant = ' ',
-                Struct = ' ',
-                Event = ' ',
-                Operator = ' ',
-                TypeParameter = ' ',
-                Copilot = ' ',
-            }
+      -- These require the vs code codicons `https://microsoft.github.io/vscode-codicons`
+      -- The trailisng space is required for formatting
+
+      local cmp_kinds = {
+        Text = ' ',
+        Method = ' ',
+        Function = ' ',
+        Constructor = ' ',
+        Field = ' ',
+        Variable = ' ',
+        Class = ' ',
+        Interface = ' ',
+        Module = ' ',
+        Property = ' ',
+        Unit = ' ',
+        Value = ' ',
+        Enum = ' ',
+        Keyword = ' ',
+        Snippet = ' ',
+        Color = ' ',
+        File = ' ',
+        Reference = ' ',
+        Folder = ' ',
+        EnumMember = ' ',
+        Constant = ' ',
+        Struct = ' ',
+        Event = ' ',
+        Operator = ' ',
+        TypeParameter = ' ',
+        Copilot = ' ',
+      }
 
 
-            local has_words_before = function()
-                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
-                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-                return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+      local has_words_before = function()
+        if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+      end
+
+      cmp.setup({
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        sources = {
+          { name = "copilot" },
+          { name = 'path' },
+          { name = 'nvim_lsp' },
+          { name = 'buffer',  keyword_length = 3 },
+          -- { name = 'luasnip', keyword_length = 2 },
+        },
+        mapping = {
+          -- `Enter` key to confirm completion
+          ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+          -- Ctrl+Space to trigger completion menu
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ["<Tab>"] = vim.schedule_wrap(function(fallback)
+            if cmp.visible() and has_words_before() then
+              cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+            else
+              fallback()
+            end
+          end),
+        },
+        formatting = {
+          fields = { "kind", "abbr", "menu" },
+          -- vim_item : see `h complete-items'
+          format = function(entry, vim_item)
+            vim_item.kind = cmp_kinds[vim_item.kind] or ''
+            -- vim_item.kind = (cmp_kinds[vim_item.kind] or '') .. vim_item.kind
+
+            -- Import Path
+            if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= "" then
+              vim_item.menu = entry.completion_item.detail
+            else
+              -- Source
+              vim_item.menu = ({
+                buffer   = "[Buffer]",
+                nvim_lsp = "[LSP]",
+                luasnip  = "[LuaSnip]",
+                path     = "[Path]",
+                copilot  = "[Copilot]",
+              })[entry.source.name]
             end
 
-            cmp.setup({
-                window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
-                },
-                sources = {
-                    { name = "copilot" },
-                    { name = 'path' },
-                    { name = 'nvim_lsp' },
-                    { name = 'buffer',  keyword_length = 3 },
-                    -- { name = 'luasnip', keyword_length = 2 },
-                },
-                mapping = {
-                    -- `Enter` key to confirm completion
-                    ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
-                    -- Ctrl+Space to trigger completion menu
-                    ['<C-Space>'] = cmp.mapping.complete(),
-                    ["<Tab>"] = vim.schedule_wrap(function(fallback)
-                        if cmp.visible() and has_words_before() then
-                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-                        else
-                            fallback()
-                        end
-                    end),
-                },
-                formatting = {
-                    fields = { "kind", "abbr", "menu" },
-                    -- vim_item : see `h complete-items'
-                    format = function(entry, vim_item)
-                        vim_item.kind = cmp_kinds[vim_item.kind] or ''
-                        -- vim_item.kind = (cmp_kinds[vim_item.kind] or '') .. vim_item.kind
+            return vim_item
+          end,
+        },
+        sorting = {
+          priority_weight = 2,
+          comparators = {
+            require("copilot_cmp.comparators").prioritize,
 
-                        -- Import Path
-                        if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= "" then
-                            vim_item.menu = entry.completion_item.detail
-                        else
-                            -- Source
-                            vim_item.menu = ({
-                                buffer   = "[Buffer]",
-                                nvim_lsp = "[LSP]",
-                                luasnip  = "[LuaSnip]",
-                                path     = "[Path]",
-                                copilot  = "[Copilot]",
-                            })[entry.source.name]
-                        end
+            -- Below is the default comparitor list and order for nvim-cmp
+            cmp.config.compare.offset,
+            -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
+            cmp.config.compare.exact,
+            cmp.config.compare.score,
+            cmp.config.compare.recently_used,
+            cmp.config.compare.locality,
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+          },
+        },
+      })
 
-                        return vim_item
-                    end,
-                },
-                sorting = {
-                    priority_weight = 2,
-                    comparators = {
-                        require("copilot_cmp.comparators").prioritize,
+      local null_ls = require('null-ls')
 
-                        -- Below is the default comparitor list and order for nvim-cmp
-                        cmp.config.compare.offset,
-                        -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
-                        cmp.config.compare.exact,
-                        cmp.config.compare.score,
-                        cmp.config.compare.recently_used,
-                        cmp.config.compare.locality,
-                        cmp.config.compare.kind,
-                        cmp.config.compare.sort_text,
-                        cmp.config.compare.length,
-                        cmp.config.compare.order,
-                    },
-                },
-            })
-
-            local null_ls = require('null-ls')
-
-            null_ls.setup({
-                sources = {
-                    null_ls.builtins.diagnostics.eslint,
-                    null_ls.builtins.formatting.prettier.with({
-                        only_local = "node_modules/.bin",
-                        extra_filetypes = { "svelte" }
-                    })
-                }
-            })
-        end
-    }
+      null_ls.setup({
+        sources = {
+          null_ls.builtins.formatting.prettier.with({
+            only_local = "node_modules/.bin",
+            extra_filetypes = { "svelte" }
+          })
+        }
+      })
+    end
+  }
 }
