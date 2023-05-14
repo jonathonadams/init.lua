@@ -25,16 +25,13 @@ return {
       { 'hrsh7th/cmp-nvim-lsp' }, -- Required
       { 'L3MON4D3/LuaSnip' },     -- Required
 
-      -- Rust Tools
-      { 'simrat39/rust-tools.nvim' },
-      { 'nvim-lua/plenary.nvim' },
-      { 'mfussenegger/nvim-dap' },
+      -- Inlay Hints
+      { 'lvimuser/lsp-inlayhints.nvim' },
 
       -- Copilot
       { 'zbirenbaum/copilot-cmp' }, -- Optional
     },
     config = function()
-
       vim.diagnostic.config({
         virtual_text = {
           spacing = 0,
@@ -42,6 +39,7 @@ return {
           prefix = "",
         },
       })
+
 
       local lsp = require('lsp-zero').preset({
         name = 'recommended',
@@ -64,19 +62,7 @@ return {
         lsp.default_keymaps({ buffer = bufnr })
       end)
 
-      lsp.skip_server_setup({ 'rust_analyzer' })
-
       lsp.setup()
-
-      local rust_tools = require('rust-tools')
-
-      rust_tools.setup({
-        server = {
-          on_attach = function(_, bufnr)
-            vim.keymap.set('n', '<leader>ca', rust_tools.hover_actions.hover_actions, { buffer = bufnr })
-          end
-        }
-      })
 
       lsp.configure('tsserver', {
         single_file_support = false,
@@ -144,7 +130,6 @@ return {
         Copilot = ' ',
       }
 
-
       local has_words_before = function()
         if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -181,7 +166,6 @@ return {
           -- vim_item : see `h complete-items'
           format = function(entry, vim_item)
             vim_item.kind = cmp_kinds[vim_item.kind] or ''
-            -- vim_item.kind = (cmp_kinds[vim_item.kind] or '') .. vim_item.kind
 
             -- Import Path
             if entry.completion_item.detail ~= nil and entry.completion_item.detail ~= "" then
@@ -229,6 +213,33 @@ return {
             extra_filetypes = { "svelte" }
           })
         }
+      })
+    end
+  },
+  {
+    'lvimuser/lsp-inlayhints.nvim',
+    config = function()
+      local ih = require("lsp-inlayhints")
+      ih.setup(
+        {
+          inlay_hints = {
+            highlight = "Comment", -- "LspInlayHint",
+          },
+        }
+      )
+
+      vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = "LspAttach_inlayhints",
+        callback = function(args)
+          if not (args.data and args.data.client_id) then
+            return
+          end
+
+          local bufnr = args.buf
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          ih.on_attach(client, bufnr)
+        end,
       })
     end
   }
