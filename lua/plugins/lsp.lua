@@ -25,18 +25,22 @@ return {
       { 'hrsh7th/cmp-nvim-lsp' }, -- Required
       { 'L3MON4D3/LuaSnip' },     -- Required
 
+      -- Rust Tools
+      { 'simrat39/rust-tools.nvim' },
+      { 'nvim-lua/plenary.nvim' },
+      { 'mfussenegger/nvim-dap' },
+
       -- Copilot
       { 'zbirenbaum/copilot-cmp' }, -- Optional
     },
     config = function()
+
       vim.diagnostic.config({
         virtual_text = {
           spacing = 0,
           source = "always",
           prefix = "",
-          -- severity = { min = vim.diagnostic.severity.WARN },
         },
-
       })
 
       local lsp = require('lsp-zero').preset({
@@ -47,7 +51,6 @@ return {
         }
       })
 
-
       lsp.ensure_installed({
         'lua_ls',
         'eslint',
@@ -57,10 +60,23 @@ return {
         'svelte'
       })
 
-
       lsp.on_attach(function(_, bufnr)
         lsp.default_keymaps({ buffer = bufnr })
       end)
+
+      lsp.skip_server_setup({ 'rust_analyzer' })
+
+      lsp.setup()
+
+      local rust_tools = require('rust-tools')
+
+      rust_tools.setup({
+        server = {
+          on_attach = function(_, bufnr)
+            vim.keymap.set('n', '<leader>ca', rust_tools.hover_actions.hover_actions, { buffer = bufnr })
+          end
+        }
+      })
 
       lsp.configure('tsserver', {
         single_file_support = false,
