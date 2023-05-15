@@ -1,9 +1,5 @@
 return {
   {
-    "jose-elias-alvarez/null-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-  },
-  {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v2.x',
     event = "BufRead",
@@ -24,9 +20,6 @@ return {
       { 'hrsh7th/nvim-cmp' },     -- Required
       { 'hrsh7th/cmp-nvim-lsp' }, -- Required
       { 'L3MON4D3/LuaSnip' },     -- Required
-
-      -- Inlay Hints
-      { 'lvimuser/lsp-inlayhints.nvim' },
 
       -- Copilot
       { 'zbirenbaum/copilot-cmp' }, -- Optional
@@ -62,12 +55,6 @@ return {
         lsp.default_keymaps({ buffer = bufnr })
       end)
 
-      lsp.setup()
-
-      lsp.configure('tsserver', {
-        single_file_support = false,
-      })
-
       lsp.set_sign_icons({
         error = '✘',
         warn = '▲',
@@ -83,13 +70,51 @@ return {
         servers = {
           ['lua_ls'] = { 'lua' },
           ['rust_analyzer'] = { 'rust' },
-          -- prettier
-          ['null-ls'] = { 'javascript', 'typescript', 'svelte', 'html', 'css', 'json', 'yaml', 'scss' },
-          ['pyright'] = { 'python' },
+          ['null-ls'] = {
+            -- prettier
+            'javascript',
+            'typescript',
+            'svelte',
+            'html',
+            'css',
+            'json',
+            'yaml',
+            'scss',
+            -- Black
+            'python'
+          },
         }
       })
 
       local lspconfig = require('lspconfig')
+      local utils = require('utils')
+
+      lspconfig.tsserver.setup({
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = 'all',
+              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+            }
+          },
+        }
+      })
+
+      lspconfig.eslint.setup({
+        single_file_support = false,
+      })
+
+      lspconfig.pyright.setup({
+        before_init = function(_, config)
+          config.settings.python.pythonPath = utils.get_python_path(config.root_dir)
+        end
+      })
 
       -- (Optional) Configure lua language server for neovim
       lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
@@ -130,11 +155,6 @@ return {
         Copilot = ' ',
       }
 
-      local has_words_before = function()
-        if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
-        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-        return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
-      end
 
       cmp.setup({
         window = {
@@ -154,7 +174,7 @@ return {
           -- Ctrl+Space to trigger completion menu
           ['<C-Space>'] = cmp.mapping.complete(),
           ["<Tab>"] = vim.schedule_wrap(function(fallback)
-            if cmp.visible() and has_words_before() then
+            if cmp.visible() and utils.has_words_before() then
               cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
             else
               fallback()
@@ -211,22 +231,25 @@ return {
           null_ls.builtins.formatting.prettier.with({
             only_local = "node_modules/.bin",
             extra_filetypes = { "svelte" }
-          })
+          }),
+          null_ls.builtins.formatting.black.with({
+            only_local = ".venv/bin",
+          }),
+
         }
       })
     end
   },
   {
+    "jose-elias-alvarez/null-ls.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+  },
+  {
     'lvimuser/lsp-inlayhints.nvim',
+    ft = { 'rust', 'python', 'typescript', 'javascript' },
     config = function()
       local ih = require("lsp-inlayhints")
-      ih.setup(
-        {
-          inlay_hints = {
-            highlight = "Comment", -- "LspInlayHint",
-          },
-        }
-      )
+      ih.setup()
 
       vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
       vim.api.nvim_create_autocmd("LspAttach", {
