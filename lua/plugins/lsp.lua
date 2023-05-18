@@ -48,6 +48,7 @@ return {
         'tsserver',
         'rust_analyzer',
         'pyright',
+        'ruff_lsp',
         'svelte'
       })
 
@@ -90,27 +91,24 @@ return {
       local utils = require('utils')
 
       lspconfig.tsserver.setup({
-        settings = {
-          typescript = {
-            inlayHints = {
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            }
-          },
-        }
+        single_file_support = false,
       })
 
       lspconfig.eslint.setup({
         single_file_support = false,
       })
 
+      -- See https://github.com/neovim/nvim-lspconfig/issues/726
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
+
       lspconfig.pyright.setup({
+        capabilities = capabilities,
+        settings = {
+          python = {
+            analysis = { diagnosticMode = "off", typeCheckingMode = "off" },
+          },
+        },
         before_init = function(_, config)
           config.settings.python.pythonPath = utils.get_python_path(config.root_dir)
         end
@@ -235,7 +233,6 @@ return {
           null_ls.builtins.formatting.black.with({
             only_local = ".venv/bin",
           }),
-
         }
       })
     end
@@ -246,7 +243,7 @@ return {
   },
   {
     'lvimuser/lsp-inlayhints.nvim',
-    ft = { 'rust', 'python', 'typescript', 'javascript' },
+    ft = { 'rust' },
     config = function()
       local ih = require("lsp-inlayhints")
       ih.setup()

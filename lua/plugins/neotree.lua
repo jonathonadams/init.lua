@@ -2,7 +2,6 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v2.x",
-    --cmd = { "Neotree" },
     lazy = false,
     priority = 999,
     dependencies = {
