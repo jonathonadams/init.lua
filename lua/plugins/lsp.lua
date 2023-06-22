@@ -2,7 +2,7 @@ return {
   {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v2.x',
-    event = "BufRead",
+    event = "VeryLazy",
     cmd = { "Mason" },
     dependencies = {
       -- LSP Support
@@ -58,7 +58,7 @@ return {
 
       lsp.set_sign_icons({
         error = '✘',
-        warn = '▲',
+        warn = '',
         hint = '⚑',
         info = '»'
       })

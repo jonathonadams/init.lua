@@ -1,7 +1,7 @@
 -- project view
 --vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 -- project tree
-vim.keymap.set("n", "<leader>pt", vim.cmd.Neotree)
+vim.keymap.set("n", "<leader>pt", ":Neotree reveal=true<CR>")
 
 -- move highlighted line up/down
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
