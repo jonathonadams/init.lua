@@ -2,7 +2,6 @@ return {
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v2.x",
-    tag = "2.43",
     lazy = false,
     priority = 999,
     dependencies = {
@@ -37,6 +36,7 @@ return {
       vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
 
       require("neo-tree").setup({
+        popup_border_style = "rounded",
         window = {
           position = "current",
           mapping_options = {
@@ -56,11 +56,9 @@ return {
         filesystem = {
           filtered_items = {
             visible = true, -- when true, they will just be displayed differently than normal items
-            hide_dotfiles = true,
+            hide_dotfiles = false,
             hide_gitignored = true,
-            hide_by_name = { -- The default includes .DS_Store, su must define it
-              --"node_modules"
-            },
+            hide_by_name = {},        -- The default includes .DS_Store, su must define it
           },
           follow_current_file = true, -- this will find and focus the file in the active buffer every
           -- time the current file is changed while the tree is open.
@@ -105,7 +103,6 @@ return {
             }
           },
         },
-
         buffers = {
           group_empty_dirs = false, -- when true, empty folders will be grouped together
           show_unloaded = true,
