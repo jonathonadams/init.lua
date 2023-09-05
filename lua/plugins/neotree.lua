@@ -1,7 +1,7 @@
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
-    branch = "v2.x",
+    branch = "v3.x",
     lazy = false,
     priority = 999,
     dependencies = {
@@ -47,20 +47,18 @@ return {
         source_selector = {
           winbar = true,
           statusline = false,
-          sources = {
-            { source = "filesystem", display_name = " 󰉓 Files " },
-            { source = "git_status", display_name = " 󰊢 Git " },
-            { source = "buffers",    display_name = " 󰈙 Buffers " }
-          },
         },
         filesystem = {
           filtered_items = {
             visible = true, -- when true, they will just be displayed differently than normal items
             hide_dotfiles = false,
             hide_gitignored = true,
-            hide_by_name = {},        -- The default includes .DS_Store, su must define it
+            hide_by_name = {}, -- The default includes .DS_Store, su must define it
           },
-          follow_current_file = true, -- this will find and focus the file in the active buffer every
+          follow_current_file = {
+            enabled = true,
+            leave_dirs_open = true,
+          },
           -- time the current file is changed while the tree is open.
           group_empty_dirs = false,
 
@@ -71,36 +69,6 @@ return {
         default_component_configs = {
           indent = {
             with_markers = false,
-          },
-          icon = {
-            folder_empty = "󰜌",
-            folder_empty_open = "󰜌",
-          },
-          git_status = {
-            symbols = {
-              renamed  = "󰁕",
-              unstaged = "󰄱",
-            },
-          },
-          document_symbols = {
-            kinds = {
-              File = { icon = "󰈙", hl = "Tag" },
-              Namespace = { icon = "󰌗", hl = "Include" },
-              Package = { icon = "󰏖", hl = "Label" },
-              Class = { icon = "󰌗", hl = "Include" },
-              Property = { icon = "󰆧", hl = "@property" },
-              Enum = { icon = "󰒻", hl = "@number" },
-              Function = { icon = "󰊕", hl = "Function" },
-              String = { icon = "󰀬", hl = "String" },
-              Number = { icon = "󰎠", hl = "Number" },
-              Array = { icon = "󰅪", hl = "Type" },
-              Object = { icon = "󰅩", hl = "Type" },
-              Key = { icon = "󰌋", hl = "" },
-              Struct = { icon = "󰌗", hl = "Type" },
-              Operator = { icon = "󰆕", hl = "Operator" },
-              TypeParameter = { icon = "󰊄", hl = "Type" },
-              StaticMethod = { icon = '󰠄 ', hl = 'Function' },
-            }
           },
         },
         buffers = {

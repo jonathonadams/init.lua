@@ -2,30 +2,30 @@ return {
   {
     'folke/zen-mode.nvim',
     keys = {
-      { '<leader>zz'},
+      { '<leader>zz' },
     },
     dependencies = {
-      {'folke/twilight.nvim'},
+      { 'folke/twilight.nvim' },
     },
-    config = function()  
+    config = function()
       local zen = require("zen-mode")
       zen.setup {
         window = {
-            heigth = 60,
-            width = 90,
-            --options = {
-            --    number = true,
-            --    relativenumber = true,
-            --}
+          heigth = 60,
+          width = 90,
+          --options = {
+          --    number = true,
+          --    relativenumber = true,
+          --}
         },
         plugins = {
           tmux = { enabled = true },
           kitty = {
             enabled = false,
-            font = "+0",  
+            font = "+0",
           },
         },
-        on_open = function(win)
+        on_open = function()
           vim.fn.system({
             "yabai",
             "-m",
@@ -48,7 +48,7 @@ return {
       vim.keymap.set("n", "<leader>zz", zen.toggle)
     end,
   },
-  { 
+  {
     "folke/twilight.nvim",
     config = function()
       require("twilight").setup {
@@ -56,5 +56,5 @@ return {
         context = 15,
       }
     end
-  } 
+  }
 }
