@@ -20,9 +20,6 @@ return {
       { 'hrsh7th/nvim-cmp' },     -- Required
       { 'hrsh7th/cmp-nvim-lsp' }, -- Required
       { 'L3MON4D3/LuaSnip' },     -- Required
-
-      -- Copilot
-      { 'zbirenbaum/copilot-cmp' }, -- Optional
     },
     config = function()
       vim.diagnostic.config({
@@ -38,7 +35,7 @@ return {
         name = 'recommended',
         configure_diagnostics = false,
         manage_nvim_cmp = {
-          set_sources = false
+          set_sources = true
         }
       })
 
@@ -49,7 +46,8 @@ return {
         'rust_analyzer',
         'pyright',
         'ruff_lsp',
-        'svelte'
+        'svelte',
+        'gopls'
       })
 
       lsp.on_attach(function(_, bufnr)
@@ -71,6 +69,7 @@ return {
         servers = {
           ['lua_ls'] = { 'lua' },
           ['rust_analyzer'] = { 'rust' },
+          ['gopls'] = { 'go' },
           ['null-ls'] = {
             -- prettier
             'javascript',
@@ -96,6 +95,22 @@ return {
 
       lspconfig.eslint.setup({
         single_file_support = false,
+      })
+
+      lspconfig.gopls.setup({
+        settings = {
+          gopls = {
+            hints = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
+          },
+        }
       })
 
       -- See https://github.com/neovim/nvim-lspconfig/issues/726
@@ -159,13 +174,6 @@ return {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
         },
-        sources = {
-          { name = "copilot" },
-          { name = 'path' },
-          { name = 'nvim_lsp' },
-          { name = 'buffer',  keyword_length = 3 },
-          -- { name = 'luasnip', keyword_length = 2 },
-        },
         mapping = {
           -- `Enter` key to confirm completion
           ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
@@ -202,24 +210,9 @@ return {
             return vim_item
           end,
         },
-        sorting = {
-          priority_weight = 2,
-          comparators = {
-            require("copilot_cmp.comparators").prioritize,
-
-            -- Below is the default comparitor list and order for nvim-cmp
-            cmp.config.compare.offset,
-            -- cmp.config.compare.scopes, --this is commented in nvim-cmp too
-            cmp.config.compare.exact,
-            cmp.config.compare.score,
-            cmp.config.compare.recently_used,
-            cmp.config.compare.locality,
-            cmp.config.compare.kind,
-            cmp.config.compare.sort_text,
-            cmp.config.compare.length,
-            cmp.config.compare.order,
-          },
-        },
+        -- sorting = {
+        --   priority_weight = 2,
+        -- },
       })
 
       local null_ls = require('null-ls')
@@ -243,7 +236,7 @@ return {
   },
   {
     'lvimuser/lsp-inlayhints.nvim',
-    ft = { 'rust' },
+    ft = { 'rust', 'go' },
     config = function()
       local ih = require("lsp-inlayhints")
       ih.setup()
