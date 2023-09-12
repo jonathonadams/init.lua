@@ -1,25 +1,26 @@
 return {
   {
     'VonHeikemen/lsp-zero.nvim',
-    branch = 'v2.x',
+    branch = 'v3.x',
     event = "VeryLazy",
-    cmd = { "Mason" },
     dependencies = {
+      -- Mason to manage LSP servers
+      { 'williamboman/mason.nvim' },
+      { 'williamboman/mason-lspconfig.nvim' },
+
       -- LSP Support
-      { 'neovim/nvim-lspconfig' }, -- Required
       {
-        -- Optional
-        'williamboman/mason.nvim',
-        build = function()
-          pcall(vim.cmd, 'MasonUpdate')
-        end,
+        'neovim/nvim-lspconfig',
+        dependencies = {
+          { 'hrsh7th/cmp-nvim-lsp' },
+        },
       },
-      { 'williamboman/mason-lspconfig.nvim' }, -- Optional
 
       -- Autocompletion
-      { 'hrsh7th/nvim-cmp' },     -- Required
-      { 'hrsh7th/cmp-nvim-lsp' }, -- Required
-      { 'L3MON4D3/LuaSnip' },     -- Required
+      {
+        'hrsh7th/nvim-cmp',
+        'L3MON4D3/LuaSnip'
+      },
     },
     config = function()
       vim.diagnostic.config({
@@ -31,70 +32,53 @@ return {
       })
 
 
-      local lsp = require('lsp-zero').preset({
-        name = 'recommended',
-        configure_diagnostics = false,
-        manage_nvim_cmp = {
-          set_sources = true
-        }
-      })
+      local lsp_zero = require('lsp-zero')
 
-      lsp.ensure_installed({
-        'lua_ls',
-        'eslint',
-        'tsserver',
-        'rust_analyzer',
-        'pyright',
-        'ruff_lsp',
-        'svelte',
-        'gopls'
-      })
-
-      lsp.on_attach(function(_, bufnr)
-        lsp.default_keymaps({ buffer = bufnr })
+      lsp_zero.on_attach(function(_, bufnr)
+        lsp_zero.default_keymaps({ buffer = bufnr })
       end)
 
-      lsp.set_sign_icons({
+      local lspconfig = require('lspconfig')
+
+      require('mason').setup({})
+      require('mason-lspconfig').setup({
+        ensure_installed = {
+          'lua_ls',
+          'eslint',
+          'tsserver',
+          'rust_analyzer',
+          'pyright',
+          'ruff_lsp',
+          'gopls'
+        },
+        handlers = {
+          lsp_zero.default_setup,
+          lua_ls = function()
+            local lua_opts = lsp_zero.nvim_lua_ls()
+            lspconfig.lua_ls.setup(lua_opts)
+          end,
+        },
+      })
+
+      lsp_zero.set_sign_icons({
         error = '✘',
         warn = '',
         hint = '⚑',
         info = '»'
       })
 
-      lsp.format_mapping('<leader>f', {
-        format_opts = {
-          async = false,
-          timeout_ms = 10000,
-        },
-        servers = {
-          ['lua_ls'] = { 'lua' },
-          ['rust_analyzer'] = { 'rust' },
-          ['gopls'] = { 'go' },
-          ['null-ls'] = {
-            -- prettier
-            'javascript',
-            'typescript',
-            'svelte',
-            'html',
-            'css',
-            'json',
-            'yaml',
-            'scss',
-            -- Black
-            'python'
-          },
-        }
-      })
-
-      local lspconfig = require('lspconfig')
       local utils = require('utils')
 
-      lspconfig.tsserver.setup({
+      lsp_zero.set_server_config({
         single_file_support = false,
-      })
-
-      lspconfig.eslint.setup({
-        single_file_support = false,
+        capabilities = {
+          textDocument = {
+            foldingRange = {
+              dynamicRegistration = false,
+              lineFoldingOnly = true
+            }
+          }
+        }
       })
 
       lspconfig.gopls.setup({
@@ -129,16 +113,37 @@ return {
         end
       })
 
-      -- (Optional) Configure lua language server for neovim
-      lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
 
-      lsp.setup()
+      -- leader f to apply formatting to any given file
+      lsp_zero.format_mapping('<leader>f', {
+        format_opts = {
+          async = false,
+          timeout_ms = 10000,
+        },
+        servers = {
+          ['lua_ls'] = { 'lua' },
+          ['rust_analyzer'] = { 'rust' },
+          ['gopls'] = { 'go' },
+          ['null-ls'] = {
+            -- prettier
+            'javascript',
+            'typescript',
+            'svelte',
+            'html',
+            'css',
+            'json',
+            'yaml',
+            'scss',
+            -- Black
+            'python'
+          },
+        }
+      })
 
       local cmp = require('cmp')
 
       -- These require the vs code codicons `https://microsoft.github.io/vscode-codicons`
       -- The trailisng space is required for formatting
-
       local cmp_kinds = {
         Text = ' ',
         Method = ' ',
@@ -168,13 +173,15 @@ return {
         Copilot = ' ',
       }
 
-
       cmp.setup({
         window = {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
         },
-        mapping = {
+        mapping = cmp.mapping.preset.insert({
+          -- scroll up and down the documentation window
+          ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-d>'] = cmp.mapping.scroll_docs(4),
           -- `Enter` key to confirm completion
           ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
           -- Ctrl+Space to trigger completion menu
@@ -186,7 +193,7 @@ return {
               fallback()
             end
           end),
-        },
+        }),
         formatting = {
           fields = { "kind", "abbr", "menu" },
           -- vim_item : see `h complete-items'
@@ -210,9 +217,6 @@ return {
             return vim_item
           end,
         },
-        -- sorting = {
-        --   priority_weight = 2,
-        -- },
       })
 
       local null_ls = require('null-ls')
