@@ -25,7 +25,7 @@ return {
             font = "+0",
           },
         },
-        on_open = function()
+        on_open = function(_)
           vim.fn.system({
             "yabai",
             "-m",

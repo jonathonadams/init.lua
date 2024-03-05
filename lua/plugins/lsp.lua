@@ -49,7 +49,8 @@ return {
           'rust_analyzer',
           'pyright',
           'ruff_lsp',
-          'gopls'
+          'gopls',
+          'svelte'
         },
         handlers = {
           lsp_zero.default_setup,
@@ -132,6 +133,7 @@ return {
             'html',
             'css',
             'json',
+            'jsonc',
             'yaml',
             'scss',
             -- Black

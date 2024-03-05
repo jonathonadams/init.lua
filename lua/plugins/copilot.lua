@@ -8,8 +8,8 @@ return {
           enabled = true
         },
         suggestion = {
-          enabled = false,
-          --  auto_trigger = false,
+          enabled = true,
+          auto_trigger = true,
         },
       })
     end,
