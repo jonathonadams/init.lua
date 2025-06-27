@@ -6,9 +6,10 @@ return {
       require("nvim-treesitter.install").update({ with_sync = true })
     end,
     config = function()
-      require('nvim-treesitter.configs').setup {
+      local configs = require("nvim-treesitter.configs")
+      configs.setup {
         -- A list of parser names, or "all"
-        ensure_installed = { "vimdoc", "javascript", "typescript", "python", "lua", "rust", "go", "sql", "css", "scss" },
+        ensure_installed = { "vimdoc", "javascript", "typescript", "python", "lua", "rust", "go", "sql", "css" },
         -- Install parsers synchronously (only applied to `ensure_installed`)
         sync_install = false,
         -- Automatically install missing parsers when entering buffer

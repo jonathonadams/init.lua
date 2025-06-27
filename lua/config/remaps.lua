@@ -1,7 +1,7 @@
 -- project view
-vim.keymap.set("n", "<leader>pt", vim.cmd.Ex)
+-- vim.keymap.set("n", "<leader>pt", vim.cmd.Ex)
 -- project tree
---vim.keymap.set("n", "<leader>pt", ":Neotree reveal=true<CR>")
+vim.keymap.set("n", "<leader>pt", ":Neotree reveal=true<CR>")
 
 -- move highlighted line up/down
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -40,8 +40,5 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 -- leader s, replace all occurrences of the word your on
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-
--- leaders x -> set executable file permissions on a file (i.e. bash script)
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 vim.keymap.set("n", "<leader>gs", ":Neotree float git_status<CR>")

@@ -26,7 +26,7 @@ return {
       vim.diagnostic.config({
         virtual_text = {
           spacing = 0,
-          source = "always",
+          source = true,
           prefix = "",
         },
       })
@@ -38,6 +38,13 @@ return {
         lsp_zero.default_keymaps({ buffer = bufnr })
       end)
 
+      lsp_zero.set_sign_icons({
+        error = '✘',
+        warn = '',
+        hint = '⚑',
+        info = '»'
+      })
+
       local lspconfig = require('lspconfig')
 
       require('mason').setup({})
@@ -45,12 +52,13 @@ return {
         ensure_installed = {
           'lua_ls',
           'eslint',
-          'tsserver',
+          'ts_ls',
           'rust_analyzer',
           'pyright',
-          'ruff_lsp',
+          'ruff',
           'gopls',
-          'svelte'
+          'svelte',
+          'tailwindcss'
         },
         handlers = {
           lsp_zero.default_setup,
@@ -61,26 +69,21 @@ return {
         },
       })
 
-      lsp_zero.set_sign_icons({
-        error = '✘',
-        warn = '',
-        hint = '⚑',
-        info = '»'
-      })
 
-      local utils = require('utils')
 
       lsp_zero.set_server_config({
         single_file_support = false,
         capabilities = {
           textDocument = {
             foldingRange = {
-              dynamicRegistration = false,
+              dynamicRegistration = true,
               lineFoldingOnly = true
             }
           }
         }
       })
+
+
 
       lspconfig.gopls.setup({
         settings = {
@@ -98,9 +101,12 @@ return {
         }
       })
 
+
       -- See https://github.com/neovim/nvim-lspconfig/issues/726
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
+
+      local utils = require('utils')
 
       lspconfig.pyright.setup({
         capabilities = capabilities,
@@ -130,14 +136,16 @@ return {
             'javascript',
             'typescript',
             'svelte',
+            'vue',
             'html',
             'css',
             'json',
             'jsonc',
             'yaml',
             'scss',
+            'md',
             -- Black
-            'python'
+            'python',
           },
         }
       })
@@ -176,6 +184,12 @@ return {
       }
 
       cmp.setup({
+        snippet = {
+          expand = function(args)
+            -- You need Neovim v0.10 to use vim.snippet
+            vim.snippet.expand(args.body)
+          end,
+        },
         window = {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
@@ -227,7 +241,7 @@ return {
         sources = {
           null_ls.builtins.formatting.prettier.with({
             only_local = "node_modules/.bin",
-            extra_filetypes = { "svelte" }
+            extra_filetypes = { "svelte", "vue", "md" }
           }),
           null_ls.builtins.formatting.black.with({
             only_local = ".venv/bin",
@@ -237,7 +251,7 @@ return {
     end
   },
   {
-    "jose-elias-alvarez/null-ls.nvim",
+    "nvimtools/none-ls.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
   },
   {

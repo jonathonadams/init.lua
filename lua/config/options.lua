@@ -1,9 +1,11 @@
 -- disable netrw at the very start of your init.lua (strongly advised)
---vim.g.loaded_netrw = 1
---vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
+
+vim.g.clipboard = "pbcopy"
 
 -- Leader/local leader - lazy.nvim needs these set first
 vim.g.mapleader = [[ ]]
@@ -37,7 +39,7 @@ vim.opt.isfname:append("@-@")
 -- ms of pausing to write to swap file
 vim.opt.updatetime = 750
 
-vim.opt.colorcolumn = "80"
+vim.opt.colorcolumn = "100"
 
 -- spellchecknig
 vim.opt.spelllang = 'en_us'

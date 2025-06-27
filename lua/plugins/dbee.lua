@@ -1,33 +1,24 @@
 return {
-  "kndndrj/nvim-dbee",
-  ft = { "sql" },
-  keys = {
-    { "<leader>db" },
-  },
-  dependencies = {
-    "MunifTanjim/nui.nvim",
-  },
-  build = function()
-    -- Install tries to automatically detect the install method.
-    -- if it fails, try calling it with one of these parameters:
-    --    "curl", "wget", "bitsadmin", "go"
-    require("dbee").install()
-  end,
-  config = function()
-    local dbee = require("dbee")
-    dbee.setup({
-      sources = {
-        require("dbee.sources").MemorySource:new({
-          {
-            name = "REST Api",
-            type = "sqlite", -- type of database driver
-            url = "~/work/rest-api/artefacts/market/main.sqlite.db",
-          },
-        }),
-      }
-
-    })
-
-    vim.keymap.set("n", "<leader>db", dbee.open)
-  end,
+  {
+    -- "kndndrj/nvim-dbee",
+    "mateuszkowalke/nvim-dbee",
+    ft = { "sql" },
+    keys = {
+      { "<leader>db" },
+    },
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+    },
+    build = function()
+      -- Install tries to automatically detect the install method.
+      -- if it fails, try calling it with one of these parameters:
+      --    "curl", "wget", "bitsadmin", "go"
+      require("dbee").install()
+    end,
+    config = function()
+      local dbee = require("dbee")
+      dbee.setup({})
+      vim.keymap.set("n", "<leader>db", dbee.toggle)
+    end,
+  }
 }

@@ -1,9 +1,15 @@
 return {
   {
+    "vhyrro/luarocks.nvim",
+    lazy = false,
+    priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
+    config = true,
+  },
+  {
     "catppuccin/nvim",
     name = "catppuccin",
     lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
+    priority = 999, -- make sure to load this before all the other start plugins
     config = function()
       require("catppuccin").setup({
         flavour = "mocha", -- latte, frappe, macchiato, mocha
