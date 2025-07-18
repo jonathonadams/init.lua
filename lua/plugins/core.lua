@@ -1,14 +1,14 @@
 return {
   {
-    "vhyrro/luarocks.nvim",
+    "vhyrro/luarocks.nvim", -- Lua package manager
     lazy = false,
-    priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
+    priority = 1000,        -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
     config = true,
   },
   {
     "catppuccin/nvim",
     name = "catppuccin",
-    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    lazy = false,   -- make sure we load this during startup if it is your main colorscheme
     priority = 999, -- make sure to load this before all the other start plugins
     config = function()
       require("catppuccin").setup({
@@ -16,11 +16,13 @@ return {
         integrations = {
           harpoon = true,
           mason = true,
-          cmp = true,
           telescope = true,
           neotree = true,
           treesitter = true,
           lsp_trouble = true,
+          -- blink_cmp = {
+          --   style = 'bordered',
+          -- },
           native_lsp = {
             enabled = true,
             virtual_text = {

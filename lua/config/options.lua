@@ -44,3 +44,5 @@ vim.opt.colorcolumn = "100"
 -- spellchecknig
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
+
+vim.opt.winborder = 'rounded'
