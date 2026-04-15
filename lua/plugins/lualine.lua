@@ -1,13 +1,10 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
-    requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     event = 'VeryLazy',
     config = function()
       require('lualine').setup {
-        options = {
-          theme = "catppuccin"
-        },
         sections = {
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', { 'diagnostics', sources = { 'nvim_lsp' } } },

@@ -20,7 +20,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("gl", vim.diagnostic.open_float, "Open Diagnostic Float")
     map("K", vim.lsp.buf.hover, "Hover Documentation")
     map("gs", vim.lsp.buf.signature_help, "Signature Documentation")
-    map("gd", vim.lsp.buf.declaration, "Goto Declaration")
+    map("gd", vim.lsp.buf.definition, "Goto Definition")
+    map("gD", vim.lsp.buf.declaration, "Goto Declaration")
     map("<leader>la", vim.lsp.buf.code_action, "Code Action")
     map("<leader>lr", vim.lsp.buf.rename, "Rename all references")
     map("<leader>v", "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>", "Goto Definition in Vertical Split")
@@ -52,7 +53,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
       -- When LSP detaches: Clears the highlighting
       vim.api.nvim_create_autocmd('LspDetach', {
-        group = vim.api.nvim_create_augroup('lsp-detach', { clear = true }),
+        group = vim.api.nvim_create_augroup('lsp-detach', { clear = false }),
         callback = function(event2)
           vim.lsp.buf.clear_references()
           vim.api.nvim_clear_autocmds { group = 'lsp-highlight', buffer = event2.buf }

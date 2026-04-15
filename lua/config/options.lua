@@ -41,8 +41,12 @@ vim.opt.updatetime = 750
 
 vim.opt.colorcolumn = "100"
 
--- spellchecknig
+-- spellchecking
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
 
 vim.opt.winborder = 'rounded'
+
+-- For avante plugin
+-- views can only be fully collapsed with the global statusline
+-- vim.opt.laststatus = 3

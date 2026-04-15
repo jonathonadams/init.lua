@@ -13,6 +13,7 @@ return {
     config = function()
       require("catppuccin").setup({
         flavour = "mocha", -- latte, frappe, macchiato, mocha
+        auto_integrations = true,
         integrations = {
           harpoon = true,
           mason = true,
@@ -20,9 +21,6 @@ return {
           neotree = true,
           treesitter = true,
           lsp_trouble = true,
-          -- blink_cmp = {
-          --   style = 'bordered',
-          -- },
           native_lsp = {
             enabled = true,
             virtual_text = {

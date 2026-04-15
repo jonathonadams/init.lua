@@ -1,20 +1,16 @@
 return {
   {
     'folke/trouble.nvim',
-    requires = "nvim-tree/nvim-web-devicons",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     keys = {
       { '<leader>xq' },
     },
     config = function()
       local trouble = require("trouble")
 
-      trouble.setup {
-        -- your configuration comes here
-        -- or leave it empty to use the default settings
-        -- refer to the configuration section below
-      }
+      trouble.setup {}
 
-      vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>",
+      vim.keymap.set("n", "<leader>xq", "<cmd>Trouble quickfix toggle<cr>",
         { silent = true, noremap = true }
       )
     end,

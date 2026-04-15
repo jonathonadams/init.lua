@@ -11,7 +11,7 @@ return {
       local zen = require("zen-mode")
       zen.setup {
         window = {
-          heigth = 60,
+          height = 60,
           width = 90,
           --options = {
           --    number = true,

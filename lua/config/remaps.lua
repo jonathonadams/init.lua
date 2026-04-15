@@ -32,7 +32,7 @@ vim.keymap.set({ "n", "x" }, "<leader>d", [["_d]])
 -- Quick navigation to new project (via tmux)
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessions<CR>")
 
--- Quick Fix list navigation
+-- Quick Fix list navigation (note: <C-j>/<C-k> are overridden by harpoon when loaded)
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
@@ -41,8 +41,11 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 -- leader s, replace all occurrences of the word your on
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
-vim.keymap.set("n", "<leader>gs", ":Neotree float git_status<CR>")
 
 vim.keymap.set("n", "<leader><leader>", function()
-  vim.cmd("so")
+  if vim.bo.filetype == "lua" then
+    vim.cmd("so")
+  end
 end)
+
+vim.keymap.set("n", "<leader>at", ":CodeCompanionChat toggle<CR>")
